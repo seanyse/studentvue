@@ -34,8 +34,8 @@ eventvalid = soup.find('input', {"id":"__EVENTVALIDATION"}).get('value')
 
 # create post request , login
 login_data = {
-    "ctl00$MainContent$username": "1207279",
-    "ctl00$MainContent$password": "swy6c40915",
+    "ctl00$MainContent$username": "username here",
+    "ctl00$MainContent$password": "password here",
     "ctl00$MainContent$Submit1": "Login",
     "__VIEWSTATE": viewstate,
     "__VIEWSTATEGENERATOR": viewstategen,
