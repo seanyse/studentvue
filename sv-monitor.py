@@ -19,7 +19,7 @@ login_url = " https://parentvue.cobbk12.org/./PXP2_Login_Student.aspx?regenerate
 gradebook_url = "https://parentvue.cobbk12.org/PXP2_Gradebook.aspx"
 
 # gather site data
-
+print("Fetching Site Data . . .")
 r = requests.Session()
 site_data = r.get(login_url,headers=headers)
 soup = BeautifulSoup(site_data.text, "html.parser")
@@ -32,26 +32,28 @@ eventvalid = soup.find('input', {"id":"__EVENTVALIDATION"}).get('value')
 # print(viewstategen)
 # print(eventvalid)
 
-# create post request , login
+# create post request payload , login
 login_data = {
-    "ctl00$MainContent$username": "username here",
-    "ctl00$MainContent$password": "password here",
-    "ctl00$MainContent$Submit1": "Login",
     "__VIEWSTATE": viewstate,
     "__VIEWSTATEGENERATOR": viewstategen,
-    "__EVENTVALIDATION": eventvalid
+    "__EVENTVALIDATION": eventvalid,
+    "ctl00$MainContent$username": "1207279",
+    "ctl00$MainContent$password": "swy6c40915",
+    "ctl00$MainContent$Submit1": "Login",
+    
 
 }
 
-
+print("Attemping Login . . .")
 r = requests.Session()
 result =  r.post(login_url, data = login_data, headers=headers)
 result = str(result)
 resultcheck = result.strip()
 
+
 while True:
     if resultcheck == "<Response [500]>":
-        print("Fetching Site Data . . .")
+        print("Invalid Site Data, Refreshing . . .")
         r = requests.Session()
         site_data = r.get(login_url,headers=headers)
         soup = BeautifulSoup(site_data.text, "html.parser")
@@ -59,15 +61,7 @@ while True:
         viewstategen = soup.find('input', {"id":"__VIEWSTATEGENERATOR"}).get('value')
         eventvalid = soup.find('input', {"id":"__EVENTVALIDATION"}).get('value')
 
-        login_data = {
-            "ctl00$MainContent$username": "1207279",
-            "ctl00$MainContent$password": "swy6c40915",
-            "ctl00$MainContent$Submit1": "Login",
-            "__VIEWSTATE": viewstate,
-            "__VIEWSTATEGENERATOR": viewstategen,
-            "__EVENTVALIDATION": eventvalid
-
-        }
+        
         r = requests.Session()
         try:
             result =  r.post(login_url, data = login_data, headers=headers)
@@ -77,7 +71,7 @@ while True:
             print(e)
         
 
-        print("Failed Login Retrying "+resultcheck)
+        
         
 
     elif resultcheck == "<Response [200]>":
@@ -87,13 +81,12 @@ while True:
         print("Unknown Error "+resultcheck)
 
 # pull grades from site
+print("Fetching Grade Data . . .")
 grades = r.get(gradebook_url, headers=headers)
 
 
-
-
 site = grades.text
-print("Fetching Grade Data . . .")
+
 
 
 soup = BeautifulSoup(grades.text, "html.parser")
@@ -107,6 +100,10 @@ while True:
         grade6 = soup.find_all('span', {"class":"mark"})[5]
         break
     
+    except IndexError:
+        print("Invalid Login")
+        break
+    
     except Exception as e:
         print(e)
         time.sleep(5)
@@ -118,5 +115,3 @@ print(grade3)
 print(grade4)
 print(grade5)
 print(grade6)
-
-
