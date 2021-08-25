@@ -37,8 +37,8 @@ login_data = {
     "__VIEWSTATE": viewstate,
     "__VIEWSTATEGENERATOR": viewstategen,
     "__EVENTVALIDATION": eventvalid,
-    "ctl00$MainContent$username": "1207279",
-    "ctl00$MainContent$password": "swy6c40915",
+    "ctl00$MainContent$username": "usernmae here",
+    "ctl00$MainContent$password": "password here",
     "ctl00$MainContent$Submit1": "Login",
     
 
