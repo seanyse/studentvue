@@ -8,9 +8,9 @@ global webhook_url
 global username 
 global password
 
-webhook_url = "https://discord.com/api/webhooks/879913833987178496/F4fCgQwiTVKl4FezBvAGF0p1yY5haAUiS_1wY9dpSHrEU1LRBxha_DHTTmkB45XDPzPc"
-username = "1207279"
-password = "swy6c40915"
+webhook_url = "webhook"
+username = "username"
+password = "password"
 
 def pull_grades():
     # initiliaztion
