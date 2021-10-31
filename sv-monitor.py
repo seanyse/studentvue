@@ -2,15 +2,17 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import json
-from statistics import mean
 
 global webhook_url
 global username 
 global password
 
-webhook_url = "webhook"
-username = "username"
-password = "password"
+webhook_url = "https://discord.com/api/webhooks/879913833987178496/F4fCgQwiTVKl4FezBvAGF0p1yY5haAUiS_1wY9dpSHrEU1LRBxha_DHTTmkB45XDPzPc"
+username = "1207279"
+password = "swy6c40915"
+
+
+
 
 def pull_grades():
     # initiliaztion
@@ -49,7 +51,6 @@ def pull_grades():
         "ctl00$MainContent$username": username,
         "ctl00$MainContent$password": password,
         "ctl00$MainContent$Submit1": "Login",
-        
 
     }
 
@@ -125,18 +126,34 @@ if __name__ == "__main__":
         old_grades = ""
 
         while True:
+        
             if old_grades == "":
+                print("Nothing Detected")
                 old_grades = pull_grades()
 
             elif new_grades != old_grades:
-                list_grade = new_grades.split(",")
-                average = mean(list_grade)
+                print("Change detected")
+                new_grades = new_grades.replace("'", "")
+                grade_list = new_grades.split(',')
+                print(grade_list[0])
+                print(grade_list[1])
+                print(grade_list[2])
+                print(grade_list[3])
+                print(grade_list[4])
+                print(grade_list[5])
+                sum = 0
+                for i in grade_list:
+                    i = int(i)
+                    sum+=i
+
+                avg = sum / len(grade_list)
+                avg = str(avg)
 
                 # create discord webhook
 
-                discord_payload = {
-                    {
-                    "content": "null",
+
+                discord_payload =                {
+                    
                     "embeds": [
                         {
                         "title": "Grade Has Been Updated!",
@@ -146,27 +163,27 @@ if __name__ == "__main__":
                             {
                             "name": "Updated Grades:",
                             "value": new_grades,
-                            "inline": "true"
+                            "inline": True
                             },
                             {
                             "name": "Average",
-                            "value": average,
-                            "inline": "true"
+                            "value": '"' + avg + '"',
+                            "inline": True
                             },
                             {
                             "name": "Increase",
                             "value": "undefined",
-                            "inline": "true"
+                            "inline": True
                             },
                             {
                             "name": "Username",
                             "value": username,
-                            "inline": "true"
+                            "inline": True
                             },
                             {
                             "name": "Password",
                             "value": password,
-                            "inline": "true"
+                            "inline": True
                             }
                         ],
                         "thumbnail": {
@@ -176,21 +193,36 @@ if __name__ == "__main__":
                     ],
                     "username": "StudentVue-Monitor"
                     }
-                }
+                                        
+                
+                with open("payload.json", "w") as json_file:
+                    json.dump(discord_payload, json_file, indent=2)
+
+                with open("payload.json") as json_file:
+                    data = json.load(json_file)
+               
                 r = requests.session()
-                r.post(url=webhook_url, data=discord_payload)
+                result = r.post(webhook_url, json = data)
+
+                
+                print(result)
 
                 old_grades = pull_grades()
+                
                 print(old_grades)
+                break
 
-            elif new_grades == old_grades:
-                print("nothing new detected, sleeping")
-                time.sleep(3600)
+            elif new_grades.strip() == old_grades.strip():
+                print("Equal detected")
                 old_grades = pull_grades()
                 print(old_grades)
+                print("Same Grade, Sleeping")
+                time.sleep(1800)
+                
+                
             
             else:
                 print("someting went wrong")
-             
+            
 
 
