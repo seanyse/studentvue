@@ -98,11 +98,11 @@ def pull_grades():
     while True:
         try:
             grade1 = soup.find_all('span', {"class":"mark"})[0]
-            grade2 = soup.find_all('span', {"class":"mark"})[1]
-            grade3 = soup.find_all('span', {"class":"mark"})[2]
-            grade4 = soup.find_all('span', {"class":"mark"})[3]
-            grade5 = soup.find_all('span', {"class":"mark"})[4]
-            grade6 = soup.find_all('span', {"class":"mark"})[5]
+            grade2 = soup.find_all('span', {"class":"mark"})[2]
+            grade3 = soup.find_all('span', {"class":"mark"})[4]
+            grade4 = soup.find_all('span', {"class":"mark"})[6]
+            grade5 = soup.find_all('span', {"class":"mark"})[8]
+            grade6 = soup.find_all('span', {"class":"mark"})[10]
             print("Grades Fetched")
             break
         
@@ -215,7 +215,7 @@ if __name__ == "__main__":
             elif new_grades.strip() == old_grades.strip():
                 print("Equal detected")
                 old_grades = pull_grades()
-                print(old_grades)
+                
                 print("Same Grade, Sleeping")
                 time.sleep(1800)
                 
