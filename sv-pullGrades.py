@@ -31,48 +31,21 @@ login_data = {
 }
 
 print("Attemping Login . . .")
-result =  r.post(login_url, data = login_data, )
-result = str(result)
+result =  str(r.post(login_url, data = login_data, ))
 resultcheck = result.strip()
 
-
-while True:
-    if resultcheck == "<Response [500]>":
-        print("Invalid Site Data, Refreshing . . .")
-        r = requests.Session()
-        site_data = r.get(login_url,)
-        soup = BeautifulSoup(site_data.text, "html.parser")
-        viewstate = soup.find('input', {"id":"__VIEWSTATE"}).get('value')
-        viewstategen = soup.find('input', {"id":"__VIEWSTATEGENERATOR"}).get('value')
-        eventvalid = soup.find('input', {"id":"__EVENTVALIDATION"}).get('value')
-
         
-        r = requests.Session()
-        try:
-            result =  r.post(login_url, data = login_data,)
-            result = str(result)
-            resultcheck = result.strip()
-        except Exception as e:
-            print(e)
-        
-
-        
-        
-
-    elif resultcheck == "<Response [200]>":
-        print("Logged In")
-        break
-    else:
-        print("Unknown Error "+resultcheck)
+if resultcheck == "<Response [200]>":
+    print("Logged In")
+    
+else:
+    print("Site Error "+resultcheck)
 
 # pull grades from site
 print("Fetching Grade Data . . .")
 grades = r.get(gradebook_url, )
 
-
 site = grades.text
-
-
 
 soup = BeautifulSoup(grades.text, "html.parser")
 while True:
