@@ -2,18 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import json
+import os 
 
-    
-# initiliaztion
-headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36',
-        'Accept': 'text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0. 8' ,
-        'Accept-Language': 'en-US, en;q=0.5',
-        'DNT': '1',
-        'Connection':'keep-alive',
-        'Upgrade-Insecure-Requests':'1',
-        'Accept-Encoding':'identity',
-    }
+username = os.environ['USER']
+password = os.environ['PASS']
 
 login_url = " https://parentvue.cobbk12.org/./PXP2_Login_Student.aspx?regenerateSessionId=True"
 gradebook_url = "https://parentvue.cobbk12.org/PXP2_Gradebook.aspx"
@@ -21,32 +13,25 @@ gradebook_url = "https://parentvue.cobbk12.org/PXP2_Gradebook.aspx"
 # gather site data
 print("Fetching Site Data . . .")
 r = requests.Session()
-site_data = r.get(login_url,headers=headers)
+site_data = r.get(login_url)
 soup = BeautifulSoup(site_data.text, "html.parser")
 viewstate = soup.find('input', {"id":"__VIEWSTATE"}).get('value')
 viewstategen = soup.find('input', {"id":"__VIEWSTATEGENERATOR"}).get('value')
 eventvalid = soup.find('input', {"id":"__EVENTVALIDATION"}).get('value')
 
 
-# print(viewstate)
-# print(viewstategen)
-# print(eventvalid)
-
 # create post request payload , login
 login_data = {
     "__VIEWSTATE": viewstate,
     "__VIEWSTATEGENERATOR": viewstategen,
     "__EVENTVALIDATION": eventvalid,
-    "ctl00$MainContent$username": "usernmae here",
-    "ctl00$MainContent$password": "password here",
+    "ctl00$MainContent$username": username,
+    "ctl00$MainContent$password": password,
     "ctl00$MainContent$Submit1": "Login",
-    
-
 }
 
 print("Attemping Login . . .")
-r = requests.Session()
-result =  r.post(login_url, data = login_data, headers=headers)
+result =  r.post(login_url, data = login_data, )
 result = str(result)
 resultcheck = result.strip()
 
@@ -55,7 +40,7 @@ while True:
     if resultcheck == "<Response [500]>":
         print("Invalid Site Data, Refreshing . . .")
         r = requests.Session()
-        site_data = r.get(login_url,headers=headers)
+        site_data = r.get(login_url,)
         soup = BeautifulSoup(site_data.text, "html.parser")
         viewstate = soup.find('input', {"id":"__VIEWSTATE"}).get('value')
         viewstategen = soup.find('input', {"id":"__VIEWSTATEGENERATOR"}).get('value')
@@ -64,7 +49,7 @@ while True:
         
         r = requests.Session()
         try:
-            result =  r.post(login_url, data = login_data, headers=headers)
+            result =  r.post(login_url, data = login_data,)
             result = str(result)
             resultcheck = result.strip()
         except Exception as e:
@@ -82,7 +67,7 @@ while True:
 
 # pull grades from site
 print("Fetching Grade Data . . .")
-grades = r.get(gradebook_url, headers=headers)
+grades = r.get(gradebook_url, )
 
 
 site = grades.text
