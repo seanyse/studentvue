@@ -49,7 +49,7 @@ def grades():
     soup = BeautifulSoup(grades.text, "html.parser")
 
     grade = []
-    for i in range(5):
+    for i in range(6):
         try:
             # add grade to list, remove everything but numbers
             grade.append(re.sub('\D', '', str(soup.find_all('span', {"class":"mark"})[i])))
