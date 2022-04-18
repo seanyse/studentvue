@@ -6,9 +6,10 @@ import re
 import os 
 import time
 import statistics
+from datetime import datetime
 
 def monitor():
-    delay = 200
+    delay = 300
     
 
     while True:
@@ -64,6 +65,7 @@ def grades():
 
             # gather site data
             print("Fetching Site Data . . .")
+            
             r = requests.Session()
             site_data = r.get(login_url)
             soup = BeautifulSoup(site_data.text, "html.parser")
@@ -92,7 +94,7 @@ def grades():
                 
             else:
                 print("Site Error "+resultcheck)
-
+                
             # pull grades from site
             print("Fetching Grade Data . . .")
             grades = r.get(gradebook_url, )
@@ -100,23 +102,29 @@ def grades():
             soup = BeautifulSoup(grades.text, "html.parser")
 
             grade = []
-            for i in range(6):
+            for i in range(12):
                 try:
                     # add grade to list, remove everything but numbers
                     grade.append(re.sub('\D', '', str(soup.find_all('span', {"class":"mark"})[i])))
-                
+                    
                 except IndexError:
                     print("Invalid Login")
                     break
 
-            print("Fetched Grade Data")
+            
+            grade = list(filter(None, grade))
             grade = [int(i) for i in grade]
+            print("Fetched Grade Data")
             print(grade)
+            now = datetime.now()
+
+            current_time = now.strftime("%H:%M:%S")
+            print("Current Time:", current_time)
             return grade
 
-        except:
-            print("Site Error")
-            continue
+        except Exception as e:
+            print("Error Occured")
+            print(e)
 
 
 if __name__ == "__main__":
