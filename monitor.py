@@ -1,4 +1,5 @@
 
+from hashlib import new
 import requests
 from bs4 import BeautifulSoup
 from discord_webhook import DiscordWebhook, DiscordEmbed
@@ -9,6 +10,7 @@ import statistics
 from datetime import datetime
 
 def monitor():
+
     delay = 300
     
 
@@ -17,11 +19,21 @@ def monitor():
             old_grade = new_grade
             
         except:
+            
             old_grade = grades()
 
         time.sleep(delay)
-        new_grade = grades()
 
+        while True:
+            
+            new_grade = grades()
+            if len(new_grade) == 0:
+                pass
+            else:
+                break
+            
+
+        
         if (old_grade != new_grade):
             print("Grade Change Detected")
             
@@ -31,13 +43,18 @@ def monitor():
             webhook_url = os.environ['WEBHOOK'] 
             webhook = DiscordWebhook(url=webhook_url, username="StudentVue-Monitor")
 
-            embed = DiscordEmbed(
-                title="Grade Has Been Updated!", description="", color='00ff29'
-            )
+            if (statistics.mean(old_grade) < statistics.mean(new_grade)):
+                embed = DiscordEmbed(
+                    title="Grade Has Been Updated!", description="", color='00ff29'
+                )
+            else:
+                embed = DiscordEmbed(
+                    title="Grade Has Been Updated!", description="", color='ff0000'
+                )
             
             embed.add_embed_field(name="Grades", value= ' '.join(map(str, new_grade)), inline=True)
             embed.add_embed_field(name="Average", value= str(statistics.mean(new_grade)), inline=True)
-            embed.add_embed_field(name="Increase", value= "undefined", inline=True)
+            embed.add_embed_field(name="Increase", value= (statistics.mean(old_grade) < statistics.mean(new_grade)), inline=True)
             embed.add_embed_field(name="User", value= os.environ['USER'], inline=True)
             embed.add_embed_field(name="Old Average", value= str(statistics.mean(old_grade)), inline=True)
 
